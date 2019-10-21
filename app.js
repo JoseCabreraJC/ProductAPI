@@ -5,14 +5,22 @@ app.use(express.json());
 
 const productos = [
     {id: 1,
-        nombre: 'Yogurt'},
+        nombreProducto: 'Yogurt',
+        categoria: 1},
     {id: 2,
-        nombre: 'Yerba'},
+        nombreProducto: 'Galletitas',
+        categoria: 2},
     {id: 3,
-        nombre: 'Cafe'}
+        nombreProducto: 'Leche',
+        categoria: 1}
     ]
 const port = 3000;
 
+const categorias = [
+    {id: 1, nombreCategoria: "Lacteos"},
+    {id: 2, nombreCategoria: "Harinas"},
+]
+//Inicio de la App
 app.get('/',(req,res) => {
     res.send('Inicio de esta cosa');
 })
@@ -21,9 +29,21 @@ app.get('/api/productos/',(req,res) => {
     res.send(productos);
 });
 
+app.get('/api/categorias/',(req,res) => {
+    res.send(categorias);
+});
+
 app.get('/api/productos/:id',(req,res) => {
-    const resultado = productos.find(producto => producto.id == parseInt(req.params.id));
-    if (!resultado) return res.status(404).send('No es encuentra ese producto')
+    const producto = productos.find(producto => producto.id == parseInt(req.params.id));
+    if (!producto) return res.status(404).send('No es encuentra ese producto');
+    const categoria = categorias.find(categoria => categoria.id==producto.categoria);
+    
+    let resultado = {
+        id:producto.id,
+        nombre:producto.nombreProducto,
+        categoria:categoria.nombreCategoria
+    };
+
     res.send(resultado);
 });
 
