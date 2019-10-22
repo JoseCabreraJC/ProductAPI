@@ -67,7 +67,11 @@ app.post('/api/productos/',(req,res)=>{
 
 app.put('/api/productos/:id',(req,res)=>{
     const producto = productos.find(producto => producto.id == parseInt(req.params.id));
-    producto.nombre= req.body.nombre;
+    if (req.body.categoria) {const categoria = categorias.find(categoria => categoria.nombreCategoria == req.body.categoria);
+        if (!categoria) return res.status(404).send('Ingreso una categoria que no existe');
+        else producto.categoria=categoria.id;
+        } 
+    producto.nombreProducto= req.body.nombre;
     res.send(producto);    
 })
 
