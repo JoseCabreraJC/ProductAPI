@@ -26,7 +26,16 @@ app.get('/',(req,res) => {
 })
 
 app.get('/api/productos/',(req,res) => {
-    res.send(productos);
+    productosConCategorias = productos.map((producto) => {
+    const categoria = categorias.find(categoria => categoria.id==producto.categoria);
+    let resultado = {
+        id:producto.id,
+        nombreProducto:producto.nombreProducto,
+        categoria:categoria.nombreCategoria
+    };
+    return resultado;
+    })
+    res.send(productosConCategorias);
 });
 
 app.get('/api/categorias/',(req,res) => {
@@ -36,20 +45,22 @@ app.get('/api/categorias/',(req,res) => {
 app.get('/api/productos/:id',(req,res) => {
     const producto = productos.find(producto => producto.id == parseInt(req.params.id));
     if (!producto) return res.status(404).send('No es encuentra ese producto');
-    const categoria = categorias.find(categoria => categoria.id==producto.categoria);
-    
+    const categoria = categorias.find(categoria => categoria.id==producto.categoria);   
     let resultado = {
         id:producto.id,
-        nombre:producto.nombreProducto,
+        nombreProducto:producto.nombreProducto,
         categoria:categoria.nombreCategoria
     };
-
     res.send(resultado);
 });
 
 app.post('/api/productos/',(req,res)=>{
-    let nombreProducto =req.body.nombre; 
-    const producto = {id : productos.length+1, nombre:nombreProducto};
+    let nombreProducto =req.body.nombre;
+    let nombreCategoria = req.body.categoria;
+    const categoria = categorias.find(categoria => categoria.nombreCategoria == nombreCategoria);
+    if (!categoria) return res.status(404).send('Ingreso una categoria que no existe');
+    const producto = {id : productos.length+1, nombreProducto:nombreProducto, categoria:categoria.id};
+    console.log(producto);
     productos.push(producto);
     res.send(producto);
 })
